@@ -21,7 +21,7 @@ public static void displayFieldProperties(Object obj) throws Exception{
 		throw new IllegalStateException("No field Id found");
 	}
 	System.out.println("id field is " + idField.getName());
-	System.out.println("index field follow:");
+	System.out.println("index fields follow:");
 	indexFields.forEach(field -> System.out.print(field.getName() + " "));
 	System.out.println("\n");
 }
