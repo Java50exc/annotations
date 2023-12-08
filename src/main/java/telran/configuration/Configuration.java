@@ -10,13 +10,11 @@ import java.lang.reflect.Method;
 public class Configuration {
 	private static final String DEFAULT_CONFIG_FILE = "application.properties";
 	Object configObj;
+	Properties properties = new Properties();
 	//TODO for HW #51
 	public Configuration(Object configObj, String configFile) throws Exception{
 		this.configObj = configObj;
-		//TODO 
-		/* prototype */
-	//	Properties properties = new Properties();
-	//	properties.load(new FileInputStream(configFile));
+		properties.load(new FileInputStream(configFile));
 	//	String value = properties.getProperty("<property name>", "<defaultValue>");
 		//<property name>=<value>
 	}
@@ -30,20 +28,27 @@ public class Configuration {
 	}
 	void injection(Field field) {
 		Value valueAnnotation = field.getAnnotation(Value.class);
-		//value structure: <property name>:<default value>
+		
+	
+		
 		Object value = getValue(valueAnnotation.value(), field.getType().getSimpleName().toLowerCase());
 		setValue(field, value);
 		
 	}
 	private Object getValue(String value, String typeName) {
-		// TODO  complete method is HW #51
+		
 		String [] tokens = value.split(":");
 		String propertyName = tokens[0];
-		String defaultValue = tokens[1];
-		//TODO if no property in configuration file and no default value, then an exception should be thrown
+		String defaultValue = tokens.length == 2 ? tokens[1] : "";
+		//value structure: <property name>:<default value>
+		String valueFile = properties.getProperty(propertyName, defaultValue);
+		if (valueFile.isEmpty()) {
+			throw new RuntimeException("no value for property " + propertyName);
+		}
+		
 		try {
 			Method method = getClass().getDeclaredMethod(typeName + "Convertion", String.class);
-			return method.invoke(this, defaultValue); //FIXME for HW #51
+			return method.invoke(this, valueFile); //FIXME for HW #51
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
