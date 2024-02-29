@@ -13,11 +13,17 @@ public class Configuration {
 	Object configObj;
 	Properties properties;
 
-	public Configuration(Object configObj, String configFile) throws Exception {
+	public Configuration(Object configObj, String configFile) {
 		this.configObj = configObj;
 
 		this.properties = new Properties();
-		properties.load(new FileInputStream(configFile));
+		
+		try (FileInputStream fis = new FileInputStream(configFile)) {
+			properties.load(fis);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		
 	}
 
 	public Configuration(Object configObject) throws Exception {
